@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <!-- Properties -->
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_PATH">target/logs</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <!-- File Appender - All Logs -->
+        <File name="FileAppender" fileName="${LOG_PATH}/automation.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </File>
+
+        <!-- Rolling File Appender - với size và time based rolling -->
+        <RollingFile name="RollingFileAppender" fileName="${LOG_PATH}/automation.log"
+                     filePattern="${LOG_PATH}/automation-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!-- Error File Appender - chỉ log ERROR -->
+        <File name="ErrorFileAppender" fileName="${LOG_PATH}/error.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+        </File>
+
+        <!-- Test Results Appender -->
+        <File name="TestResultsAppender" fileName="${LOG_PATH}/test-results.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} - %msg%n"/>
+        </File>
+
+    </Appenders>
+
+    <Loggers>
+        <!-- Specific logger cho test results -->
+        <Logger name="TestResults" level="INFO" additivity="false">
+            <AppenderRef ref="TestResultsAppender"/>
+        </Logger>
+
+        <!-- Selenium WebDriver logs -->
+        <Logger name="org.openqa.selenium" level="WARN"/>
+        <Logger name="org.apache.http" level="WARN"/>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFileAppender"/>
+            <AppenderRef ref="ErrorFileAppender"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

@@ -1,0 +1,14 @@
+<suite name="TestSuite">
+    <test name="Test">
+        <parameter name="browser" value="edge"/>
+<!--        <classes>-->
+<!--            <class name="Scripts.TestAirBnB"/>-->
+<!--            &lt;!&ndash;            <class name="Scripts.airbnbHomePage">&ndash;&gt;-->
+<!--            &lt;!&ndash;                <mehtod>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <include name="methodName"/>&ndash;&gt;-->
+<!--            &lt;!&ndash;                </mehtod>&ndash;&gt;-->
+<!--            &lt;!&ndash;            </class>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <class namw="Scripts.hrmAdminPage"/>&ndash;&gt;-->
+<!--        </classes>-->
+    </test>
+</suite>
