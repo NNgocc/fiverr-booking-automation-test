@@ -1,14 +1,18 @@
-<suite name="TestSuite">
-    <test name="Test">
-        <parameter name="browser" value="edge"/>
-<!--        <classes>-->
-<!--            <class name="Scripts.TestAirBnB"/>-->
-<!--            &lt;!&ndash;            <class name="Scripts.airbnbHomePage">&ndash;&gt;-->
-<!--            &lt;!&ndash;                <mehtod>&ndash;&gt;-->
-<!--            &lt;!&ndash;                    <include name="methodName"/>&ndash;&gt;-->
-<!--            &lt;!&ndash;                </mehtod>&ndash;&gt;-->
-<!--            &lt;!&ndash;            </class>&ndash;&gt;-->
-<!--            &lt;!&ndash;            <class namw="Scripts.hrmAdminPage"/>&ndash;&gt;-->
-<!--        </classes>-->
-    </test>
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="LoginTestSuite" parallel="false">
+
+<!-- THÊM LISTENER ĐỂ TỰ ĐỘNG STARTTEST -->
+<listeners>
+    <listener class-name="com.automation.listeners.ExtentTestListener"/>
+</listeners>
+
+<test name="ChromeLoginTest">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="url" value="https://demo5.cybersoft.edu.vn/login"/>
+
+    <classes>
+        <class name="com.automation.tests.LoginTest"/>
+    </classes>
+</test>
+
 </suite>
