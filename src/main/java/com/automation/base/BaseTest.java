@@ -1,17 +1,16 @@
 package com.automation.base;
 
-import com.automation.untils.ExtentManager;
-import com.automation.untils.ExtentTestManager;
-import com.automation.untils.LoggerUtil;
+import com.automation.untils.*;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.*;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 public class BaseTest {
+    WebDriver driver;
+
     @BeforeSuite
     public void setUpSuite() {
         // Khởi tạo ExtentReports một lần cho toàn bộ test suite
@@ -19,15 +18,43 @@ public class BaseTest {
     }
 
     @BeforeMethod
-    public void setUp(Method method) {
+    @Parameters({"browser", "url"})
+    public void setUp(@Optional("chrome") String browser, @Optional("https://demo5.cybersoft.edu.vn/") String url, Method method) {
         String testName = method.getName();
+
+        String description = "";
+        if (method.isAnnotationPresent(Test.class)) {
+            Test testAnnotation = method.getAnnotation(Test.class);
+            description = testAnnotation.description();
+        }
+        ExtentTestManager.startTest(testName, description.isEmpty() ? testName : description);
+
         LoggerUtil.startTest(testName);
 
-        // Setup WebDriver
         LoggerUtil.info("Setting up WebDriver");
-        // WebDriver initialization code here
+        ExtentTestManager.getTest().info("Setting up WebDriver");
 
-        LoggerUtil.info("Test setup completed for: " + testName);
+        DriverManager.setDriver(browser);
+        ExtentTestManager.getTest().info("WebDriver initialized:");
+
+        DriverManager.navigateToUrl(url);
+
+        String actualUrl = DriverManager.getDriver().getCurrentUrl();
+        String pageTitle = DriverManager.getDriver().getTitle();
+
+        LoggerUtil.info("Page loaded - Title: " + pageTitle);
+        LoggerUtil.info("Current URL: " + actualUrl);
+        ExtentTestManager.getTest().info("📄 Page Title: " + pageTitle);
+        ExtentTestManager.getTest().info("🔗 Current URL: " + actualUrl);
+
+        LoggerUtil.info("✅ Test setup completed for: " + testName);
+        ExtentTestManager.getTest().info("✅ Setup completed for test: " + testName);
+
+        File logsDir = new File("target/logs");
+        if (!logsDir.exists()) {
+            boolean created = logsDir.mkdirs();
+            System.out.println("📁 Logs directory created: " + created);
+        }
     }
 
     @AfterMethod
@@ -37,9 +64,27 @@ public class BaseTest {
 
         LoggerUtil.endTest(testName, testResult);
 
-        // Cleanup
+        if (result.isSuccess()) {
+            ExtentTestManager.getTest().pass("✅ Test PASSED: " + testName);
+        } else {
+            ExtentTestManager.getTest().fail("❌ Test FAILED: " + testName);
+            ExtentTestManager.getTest().fail(result.getThrowable());
+
+            // ✅ Capture screenshot on failure
+            try {
+                String screenshot = ScreenshotUtils.captureScreenshot(driver, testName);
+                if (screenshot != null) {
+                    ExtentTestManager.getTest().addScreenCaptureFromPath(screenshot);
+                    LoggerUtil.info("📸 Screenshot captured: " + screenshot);
+                }
+            } catch (Exception e) {
+                LoggerUtil.error("Failed to capture screenshot: " + e.getMessage());
+            }
+        }
+
+        // ✅ Cleanup WebDriver
         LoggerUtil.info("Cleaning up WebDriver");
-        // WebDriver cleanup code here
+        ExtentTestManager.getTest().info("Cleaning up WebDriver");
 
         ExtentTestManager.endTest();
     }
