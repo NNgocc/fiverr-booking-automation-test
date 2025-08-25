@@ -7,13 +7,12 @@ import org.testng.annotations.*;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 public class BaseTest {
-    WebDriver driver;
 
     @BeforeSuite
     public void setUpSuite() {
-        // Khởi tạo ExtentReports một lần cho toàn bộ test suite
         ExtentManager.createInstance();
     }
 
@@ -48,6 +47,8 @@ public class BaseTest {
         ExtentTestManager.getTest().info("🔗 Current URL: " + actualUrl);
 
         LoggerUtil.info("✅ Test setup completed for: " + testName);
+        LoggerUtil.info("Setup completed for: " + testName.toUpperCase());
+        MouseAnimationUtils.initialize(DriverManager.getDriver());
         ExtentTestManager.getTest().info("✅ Setup completed for test: " + testName);
 
         File logsDir = new File("target/logs");
@@ -65,24 +66,22 @@ public class BaseTest {
         LoggerUtil.endTest(testName, testResult);
 
         if (result.isSuccess()) {
-            ExtentTestManager.getTest().pass("✅ Test PASSED: " + testName);
+            ExtentTestManager.getTest().pass("Test PASSED: " + testName);
         } else {
-            ExtentTestManager.getTest().fail("❌ Test FAILED: " + testName);
+            ExtentTestManager.getTest().fail("Test FAILED: " + testName);
             ExtentTestManager.getTest().fail(result.getThrowable());
 
-            // ✅ Capture screenshot on failure
             try {
-                String screenshot = ScreenshotUtils.captureScreenshot(driver, testName);
+                String screenshot = ScreenshotUtils.captureScreenshot(DriverManager.getDriver(), testName);
                 if (screenshot != null) {
                     ExtentTestManager.getTest().addScreenCaptureFromPath(screenshot);
-                    LoggerUtil.info("📸 Screenshot captured: " + screenshot);
+                    LoggerUtil.info("Screenshot captured: " + screenshot);
                 }
             } catch (Exception e) {
                 LoggerUtil.error("Failed to capture screenshot: " + e.getMessage());
             }
         }
 
-        // ✅ Cleanup WebDriver
         LoggerUtil.info("Cleaning up WebDriver");
         ExtentTestManager.getTest().info("Cleaning up WebDriver");
 
@@ -91,7 +90,6 @@ public class BaseTest {
 
     @AfterSuite
     public void tearDownSuite() {
-        // Flush ExtentReports
         ExtentManager.flush();
     }
 }
