@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="LoginTestSuite" parallel="false">
+
+<listeners>
+    <listener class-name="com.automation.listeners.ExtentTestListener"/>
+</listeners>
+
+<test name="ChromeLoginTest">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>
+
+    <classes>
+        <class name="com.automation.tests.LoginTest"/>
+    </classes>
+</test>
+
+</suite>
