@@ -4,16 +4,9 @@ import com.automation.base.BaseTest;
 import com.automation.pages.LoginPage;
 import com.automation.untils.DriverManager;
 import com.automation.untils.ExtentTestManager;
-import com.automation.untils.LoggerUtil;
 import com.automation.untils.MouseAnimationUtils;
 import com.aventstack.extentreports.Status;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.time.Duration;
 
 public class LoginTest extends BaseTest {
     @Test(testName = "Test (animation) Valid Login", description = "Demo login với mouse animation")
@@ -31,7 +24,7 @@ public class LoginTest extends BaseTest {
         } catch (Exception e) {
             ExtentTestManager.getTest().fail("Animated test failed: " + e.getMessage());
         } finally {
-            MouseAnimationUtils.cleanup();
+            //MouseAnimationUtils.cleanup();
         }
     }
 

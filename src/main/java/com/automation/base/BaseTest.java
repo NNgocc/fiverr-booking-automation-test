@@ -26,7 +26,6 @@ public class BaseTest {
             Test testAnnotation = method.getAnnotation(Test.class);
             description = testAnnotation.description();
         }
-        //ExtentTestManager.startTest(testName, description.isEmpty() ? testName : description);
         DriverManager.setDriver(browser);
         DriverManager.navigateToUrl(url);
         MouseAnimationUtils.initialize(DriverManager.getDriver());

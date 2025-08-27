@@ -12,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v134.network.Network;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -24,6 +25,7 @@ import java.util.*;
 public class JobDetailPage {
     private WebDriver driver;
     private WebDriverWait wait;
+    JavascriptExecutor js = (JavascriptExecutor) driver;
 
     public JobDetailPage(WebDriver driver) {
         this.driver = driver;
@@ -127,12 +129,18 @@ public class JobDetailPage {
         try {
             searchCarousel();
             if (btnContactMe.isDisplayed()) {
-                MouseAnimationUtils.animateMouseToElement(btnContactMe);
-                if (checkElementClickable(btnContactMe) == false) {
-                    return false;
-                }
+                js.executeScript("window.scrollBy(0, 500);");
             }
-            btnContactMe.click();
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//button[normalize-space()='Contact Me']")));
+            if (btnContactMe.isDisplayed()) {
+                return false;
+            }
+            MouseAnimationUtils.animateMouseToElement(btnContactMe);
+            MouseAnimationUtils.pause(50);
+            MouseAnimationUtils.animateAndClick(btnContactMe);
             return true;
         } catch (Exception ex) {
             return false;
@@ -142,40 +150,55 @@ public class JobDetailPage {
     public boolean clickBtnContinue() {
         try {
             searchCarousel();
-            if (btnContactMe.isDisplayed()) {
-                MouseAnimationUtils.animateMouseToElement(btnContactMe);
-                if (checkElementClickable(btnContactMe) == false) {
-                    return false;
+            if (btnContinue.isDisplayed()) {
+                MouseAnimationUtils.animateMouseToElement(btnContinue);
+                MouseAnimationUtils.pause(50);
+                if (btnContinue.isEnabled()) {
+                    MouseAnimationUtils.animateAndClick(btnContinue);
                 }
             }
-            btnContactMe.click();
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement toarstResult = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//div[@class='Toastify']")));
+            MouseAnimationUtils.animateMouseToElement(toarstResult);
             return true;
         } catch (Exception ex) {
             return false;
         }
     }
 
-    public boolean searchOnNavigation(){
+    public boolean searchOnNavigation() {
+        js.executeScript("window.scrollBy(0, 200);");
 
+        if (!btnSearchNav.isDisplayed() || !inputSearchNav.isDisplayed()) {
+            return false;
+        }
+
+        MouseAnimationUtils.animateMouseToElement(inputSearchNav);
+        MouseAnimationUtils.animateTyping(inputSearchNav, "website");
+        MouseAnimationUtils.pause(50);
+        MouseAnimationUtils.animateAndClick(btnSearchNav);
+        WaitUtils.waitForPageLoad(driver, 10);
+        return true;
     }
 
     public void searchCarousel() {
-            MouseAnimationUtils.animateMouseToElement(btnLogo);
-            btnLogo.click();
-            WaitUtils.waitForPageLoad(driver, 10);
-            wait.until(ExpectedConditions.visibilityOf(inputSearchCarousel));
+        MouseAnimationUtils.animateMouseToElement(btnLogo);
+        btnLogo.click();
+        WaitUtils.waitForPageLoad(driver, 10);
+        wait.until(ExpectedConditions.visibilityOf(inputSearchCarousel));
 
-            MouseAnimationUtils.animateMouseToElement(inputSearchCarousel);
-            MouseAnimationUtils.animateTyping(inputSearchCarousel, "logo");
-            WaitUtils.waitForPageLoad(driver, 10);
+        MouseAnimationUtils.animateMouseToElement(inputSearchCarousel);
+        MouseAnimationUtils.animateTyping(inputSearchCarousel, "logo");
+        WaitUtils.waitForPageLoad(driver, 10);
 
-            MouseAnimationUtils.animateMouseToElement(btnSubmit);
-            btnSubmit.click();
-            ExtentTestManager.getTest().log(Status.INFO, "Search carousel");
-            WaitUtils.waitForPageLoad(driver, 10);
+        MouseAnimationUtils.animateMouseToElement(btnSubmit);
+        btnSubmit.click();
+        ExtentTestManager.getTest().log(Status.INFO, "Search carousel");
+        WaitUtils.waitForPageLoad(driver, 10);
 
-            MouseAnimationUtils.animateMouseToElement(btnCardDescription);
-            btnCardDescription.click();
+        MouseAnimationUtils.animateMouseToElement(btnCardDescription);
+        btnCardDescription.click();
     }
 
     /* Helper */
