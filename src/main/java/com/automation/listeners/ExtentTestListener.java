@@ -8,15 +8,21 @@ import com.aventstack.extentreports.markuputils.MarkupHelper;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.annotations.Test;
 
 public class ExtentTestListener implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
-        String methodName = result.getMethod().getMethodName();
-        String description = result.getMethod().getDescription();
-        ExtentTestManager.startTest(methodName, description != null ? description : methodName);
+        Test testAnnotation = result.getMethod().getConstructorOrMethod().getMethod().getAnnotation(Test.class);
 
-        ExtentTestManager.getTest().info("Test Started: " + methodName);
+        String testName = result.getMethod().getMethodName();
+        String description = "";
+
+        if (testAnnotation != null && !testAnnotation.description().isEmpty()) {
+            description = testAnnotation.description();
+        }
+
+        ExtentTestManager.startTest(testName, description);
     }
 
     @Override

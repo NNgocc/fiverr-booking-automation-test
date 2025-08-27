@@ -18,7 +18,6 @@ public class MouseAnimationUtils {
         js = (JavascriptExecutor) driver;
 
         injectMouseCursor();
-        System.out.println("✅ MouseAnimationUtils initialized");
     }
 
     /**

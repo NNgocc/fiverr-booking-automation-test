@@ -26,30 +26,10 @@ public class BaseTest {
             Test testAnnotation = method.getAnnotation(Test.class);
             description = testAnnotation.description();
         }
-        ExtentTestManager.startTest(testName, description.isEmpty() ? testName : description);
-
-        LoggerUtil.startTest(testName);
-
-        LoggerUtil.info("Setting up WebDriver");
-        ExtentTestManager.getTest().info("Setting up WebDriver");
-
+        //ExtentTestManager.startTest(testName, description.isEmpty() ? testName : description);
         DriverManager.setDriver(browser);
-        ExtentTestManager.getTest().info("WebDriver initialized:");
-
         DriverManager.navigateToUrl(url);
-
-        String actualUrl = DriverManager.getDriver().getCurrentUrl();
-        String pageTitle = DriverManager.getDriver().getTitle();
-
-        LoggerUtil.info("Page loaded - Title: " + pageTitle);
-        LoggerUtil.info("Current URL: " + actualUrl);
-        ExtentTestManager.getTest().info("📄 Page Title: " + pageTitle);
-        ExtentTestManager.getTest().info("🔗 Current URL: " + actualUrl);
-
-        LoggerUtil.info("✅ Test setup completed for: " + testName);
-        LoggerUtil.info("Setup completed for: " + testName.toUpperCase());
         MouseAnimationUtils.initialize(DriverManager.getDriver());
-        ExtentTestManager.getTest().info("✅ Setup completed for test: " + testName);
 
         File logsDir = new File("target/logs");
         if (!logsDir.exists()) {
@@ -86,6 +66,7 @@ public class BaseTest {
         ExtentTestManager.getTest().info("Cleaning up WebDriver");
 
         ExtentTestManager.endTest();
+        DriverManager.quitDriver();
     }
 
     @AfterSuite

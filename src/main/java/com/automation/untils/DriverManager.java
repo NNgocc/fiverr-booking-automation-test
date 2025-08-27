@@ -21,8 +21,6 @@ public class DriverManager {
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     public static void setDriver(String browserName) {
-        System.out.println("Setting up WebDriver for: " + browserName);
-
         switch (browserName.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
@@ -56,8 +54,6 @@ public class DriverManager {
         getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         getDriver().manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
         getDriver().manage().window().maximize();
-
-        System.out.println("WebDriver initialized: " + browserName);
     }
 
     public static WebDriver getDriver() {
@@ -109,17 +105,11 @@ public class DriverManager {
     public static void navigateToUrl(String url) {
         try {
             WebDriver webDriver = getDriver();
-
             if (webDriver == null) {
                 throw new RuntimeException("Driver is not initialized. Call setDriver() first.");
             }
-
             webDriver.get(url);
             Thread.sleep(2000);
-
-            String currentUrl = webDriver.getCurrentUrl();
-            String title = webDriver.getTitle();
-
         } catch (Exception e) {
             System.err.println("Navigation FAILED: " + e.getMessage());
             throw new RuntimeException("Failed to navigate to URL: " + url, e);

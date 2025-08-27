@@ -10,7 +10,8 @@
     <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>
 
     <classes>
-        <class name="com.automation.tests.LoginTest"/>
+<!--        <class name="com.automation.tests.LoginTest"/>-->
+        <class name="com.automation.tests.JobDetailTest"/>
     </classes>
 </test>
 
