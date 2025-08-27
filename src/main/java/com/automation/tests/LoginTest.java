@@ -28,11 +28,6 @@ public class LoginTest extends BaseTest {
             loginPage.loginWithAnimation("demo6@tech.com", "Tech@123");
             Thread.sleep(3000);
             ExtentTestManager.getTest().log(Status.INFO, "Login successful");
-//            boolean isLoginSuccessful = loginPage.verifyButtonSignIn();
-//            ExtentTestManager.getTest().info("Login result: " + (isLoginSuccessful ? "SUCCESS" : "FAILED"));
-//
-//            Assert.assertTrue(isLoginSuccessful, "Animated login should be successful");
-
         } catch (Exception e) {
             ExtentTestManager.getTest().fail("Animated test failed: " + e.getMessage());
         } finally {
