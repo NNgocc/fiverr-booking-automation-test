@@ -14,6 +14,10 @@ public class ExtentTestManager {
         extentTest.set(test);
     }
 
+    public static synchronized void setTest(ExtentTest test) {
+        extentTest.set(test);
+    }
+
     public static synchronized void endTest() {
         extentTest.remove();
     }
