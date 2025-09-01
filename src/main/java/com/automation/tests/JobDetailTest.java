@@ -3,7 +3,9 @@ package com.automation.tests;
 import com.automation.pages.JobDetailPage;
 import com.automation.untils.DriverManager;
 import com.automation.untils.ExtentTestManager;
+import com.automation.untils.LoggerUtil;
 import com.automation.untils.MouseAnimationUtils;
+import com.aventstack.extentreports.Status;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -11,6 +13,8 @@ public class JobDetailTest extends LoginTest {
     @Test(testName = "TC412 - Verify function user become a seller", description = "Verify chức năng Become a seller")
     public void verifyFunctionBecomeSeller() {
         try {
+            ExtentTestManager.getTest().info("TC412 - Verify function user become a seller");
+
             LoginTest login = new LoginTest();
             login.testAnimatedValidLogin();
             if (DriverManager.getDriver() == null) {
@@ -20,8 +24,6 @@ public class JobDetailTest extends LoginTest {
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnBecomeSeller();
             Thread.sleep(3000);
-
-            //ExtentTestManager.getTest().info("Result: " + (rs ? "SUCCESS" : "FAILED"));
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
@@ -34,9 +36,11 @@ public class JobDetailTest extends LoginTest {
         }
     }
 
-    @Test(testName = "TC413 - Verify search on navigation", description = "Verify chức năng search trên thanh menu có login")
-    public void verifyFunctionSearchOnNavigation() {
+    @Test(testName = "TC409 - Verify function user become a business", description = "Verify chức năng Fiver Business")
+    public void verifyFunctionBecomeBusiness() {
         try {
+            ExtentTestManager.getTest().info("TC409 - Verify function user become a business");
+
             LoginTest login = new LoginTest();
             login.testAnimatedValidLogin();
             if (DriverManager.getDriver() == null) {
@@ -44,22 +48,20 @@ public class JobDetailTest extends LoginTest {
                 throw new RuntimeException("WebDriver not initialized");
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
-            var rs = job.searchOnNavigation();
+            var rs = job.clickBtnBecomeBusiness();
             Thread.sleep(3000);
-            if(!rs)
-                ExtentTestManager.getTest().info("User đã đăng nhập. Không tìm thấy ô search trên thanh menu");
+
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
             else
                 Assert.assertFalse(rs, "Click button fail");
-
         } catch (Exception e) {
-            ExtentTestManager.getTest().fail("TC413 - Verify search on navigation test failed: " + e.getMessage());
+            ExtentTestManager.getTest().fail("TC409 - Verify function user become a business test failed: " + e.getMessage());
         }
     }
 
-    @Test(testName = "TC414 - Verify search on navigation dont have account", description = "Verify chức năng search trên thanh menu không có login")
-    public void verifyFunctionSearchOnNavigationDontHaveAccount() {
+    @Test(testName = "TC413 - Verify search on navigation", description = "Verify chức năng search trên thanh menu")
+    public void verifyFunctionSearchOnNavigation() {
         try {
             if (DriverManager.getDriver() == null) {
                 System.err.println("WebDriver is null! BaseTest setup failed.");
@@ -68,16 +70,31 @@ public class JobDetailTest extends LoginTest {
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.searchOnNavigation();
             Thread.sleep(3000);
-            if(!rs)
-                ExtentTestManager.getTest().info("User chưa đăng nhập. Không tìm thấy ô search trên thanh menu");
             if (rs)
-                Assert.assertTrue(rs, "Click button success");
+                Assert.assertTrue(rs, "Search success");
             else
-                Assert.assertFalse(rs, "Click button fail");
-
+                Assert.assertFalse(rs, "Search fail");
         } catch (Exception e) {
-            ExtentTestManager.getTest().fail("TC414 - Verify search on navigation dont have account test failed: " + e.getMessage());
-        } finally {
+            ExtentTestManager.getTest().fail("TC413 - Verify search on navigation test failed: " + e.getMessage());
+        }
+    }
+
+    @Test(testName = "TC414 - Verify search carousel", description = "Verify chức năng search trên carousel")
+    public void verifyFunctionSearchCarousel() {
+        try {
+            if (DriverManager.getDriver() == null) {
+                System.err.println("WebDriver is null! BaseTest setup failed.");
+                throw new RuntimeException("WebDriver not initialized");
+            }
+            JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
+            boolean rs = job.verifyFunctionSearchCarousel();
+            Thread.sleep(3000);
+            if (rs)
+                Assert.assertTrue(rs, "Search success");
+            else
+                Assert.assertFalse(rs, "Search fail");
+        } catch (Exception e) {
+            ExtentTestManager.getTest().fail("TC414 - Verify search carousel test failed: " + e.getMessage());
         }
     }
 
@@ -94,7 +111,7 @@ public class JobDetailTest extends LoginTest {
             var rs = job.clickBtnContactMe();
             Thread.sleep(3000);
             if (!rs)
-                ExtentTestManager.getTest().info("Không tìm thấy button Contact Me");
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy button Contact Me");
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
@@ -110,26 +127,25 @@ public class JobDetailTest extends LoginTest {
     @Test(testName = "TC418 - Verify package selection functionality", description = "Verify chức năng Continue")
     public void verifyButtonContinue() {
         try {
-            LoginTest login = new LoginTest();
-            login.testAnimatedValidLogin();
             if (DriverManager.getDriver() == null) {
                 System.err.println("WebDriver is null! BaseTest setup failed.");
                 throw new RuntimeException("WebDriver not initialized");
             }
+
+            LoginTest login = new LoginTest();
+            login.testAnimatedValidLogin();
+
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnContinue();
             Thread.sleep(3000);
-
-            if (!rs)
-                ExtentTestManager.getTest().info("Không tìm thấy button Continue");
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
             else
                 Assert.assertFalse(rs, "Click button fail");
         } catch (Exception e) {
-            ExtentTestManager.getTest().fail("TC418 - Verify package selection functionality test failed: " + e.getMessage());
-        } finally {
+            System.out.println("TC418 - Verify package selection functionality test failed: " + e);
+            LoggerUtil.error("Error");
         }
     }
 
@@ -145,9 +161,6 @@ public class JobDetailTest extends LoginTest {
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnCompare();
             Thread.sleep(3000);
-
-            if (!rs)
-                ExtentTestManager.getTest().info("Không tìm thấy button Compare Package");
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");

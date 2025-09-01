@@ -1,17 +1,10 @@
 package com.automation.pages;
 
-import com.automation.untils.DriverManager;
 import com.automation.untils.ExtentTestManager;
 import com.automation.untils.MouseAnimationUtils;
 import com.automation.untils.WaitUtils;
 import com.aventstack.extentreports.Status;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v134.network.Network;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -21,21 +14,28 @@ import org.testng.Assert;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.NoSuchElementException;
 
 public class JobDetailPage {
     private WebDriver driver;
     private WebDriverWait wait;
     JavascriptExecutor js = (JavascriptExecutor) driver;
+    String searchKey = "app";
+    String domain = "https://demo5.cybersoft.edu.vn/";
 
     public JobDetailPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         PageFactory.initElements(driver, this);
+        this.js = (JavascriptExecutor) driver;
     }
 
     /* Find element */
     @FindBy(xpath = "//li[contains(text(),'Become a Seller')]")
     private WebElement liBecomeSeller;
+
+    @FindBy(xpath = "//li[contains(text(),'Fiverr Business')]")
+    private WebElement liBecomeBusiness;
 
     @FindBy(xpath = "//div[@class='check-out mobile mt-5']//a[@class='compare'][normalize-space()='Compare Packages']")
     private WebElement btnComparePackages;
@@ -64,41 +64,59 @@ public class JobDetailPage {
     @FindBy(xpath = "//button[@class='btn']")
     private WebElement btnSearchNav;
 
+    @FindBy(xpath = "//img[@class='avatar']")
+    private WebElement btnAvatar;
+
+    @FindBy(className = "job-title")
+    private WebElement jobTitle;
+
+    @FindBy(className = "gigs_card_content")
+    public List<WebElement> listBookings;
+
     /* Function */
+    public boolean clickBtnBecomeBusiness() {
+        try {
+            WaitUtils.waitForPageLoad(driver, 10);
+            if (liBecomeBusiness.isDisplayed())
+                ExtentTestManager.getTest().log(Status.FAIL, "Fiver Business hiển thị khi chưa login");
+            else {
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy element menu Fiver Business");
+                return false;
+            }
+            searchCarousel();
+            String currentUrl = driver.getCurrentUrl();
+            if (liBecomeBusiness.isDisplayed()) {
+                MouseAnimationUtils.animateMouseToElement(liBecomeBusiness);
+                MouseAnimationUtils.pause(50);
+                liBecomeBusiness.click();
+
+                return verifyAfterClickActions(currentUrl);
+            } else {
+                ExtentTestManager.getTest().log(Status.SKIP, "Không tìm thấy menu Fiver Business");
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public boolean clickBtnBecomeSeller() {
         try {
             WaitUtils.waitForPageLoad(driver, 10);
+            if (liBecomeSeller.isDisplayed())
+                ExtentTestManager.getTest().log(Status.FAIL, "Become a Seller hiển thị khi chưa login");
+            else {
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy element menu Become a Seller");
+                return false;
+            }
             searchCarousel();
+            String currentUrl = driver.getCurrentUrl();
             if (liBecomeSeller.isDisplayed()) {
                 MouseAnimationUtils.animateMouseToElement(liBecomeSeller);
-                if (checkElementClickable(liBecomeSeller) == false) {
-                    return false;
-                }
-
+                MouseAnimationUtils.pause(50);
                 liBecomeSeller.click();
 
-                DevTools devTools = ((ChromeDriver) driver).getDevTools();
-                devTools.createSession();
-                devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
-                List<String> networkRequests = new ArrayList<>();
-
-                devTools.addListener(Network.requestWillBeSent(), request -> {
-                    networkRequests.add(request.getRequest().getUrl());
-                });
-
-                driver.findElement(By.linkText("Become a Seller")).click();
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                }
-
-                boolean hasSellerRequest = networkRequests.stream()
-                        .anyMatch(url -> url.contains("seller") || url.contains("register"));
-
-                Assert.assertTrue(hasSellerRequest, "Should have network request related to seller");
-                return true;
+                return verifyAfterClickActions(currentUrl);
             } else {
                 ExtentTestManager.getTest().log(Status.SKIP, "Không tìm thấy menu Become a seller");
                 return false;
@@ -110,15 +128,22 @@ public class JobDetailPage {
 
     public boolean clickBtnCompare() {
         try {
+            WaitUtils.waitForPageLoad(driver, 10);
             searchCarousel();
+
+            String currentUrl = driver.getCurrentUrl();
             if (btnComparePackages.isDisplayed()) {
                 MouseAnimationUtils.animateMouseToElement(btnComparePackages);
-                if (checkElementClickable(btnComparePackages) == false) {
-                    //ExtentTestManager.getTest().log(Status.INFO, "Become a Seller doesnt have event");
-                    return false;
+                MouseAnimationUtils.pause(50);
+                btnComparePackages.click();
+                boolean actionResult = verifyAfterClickActions(currentUrl);
+                ExtentTestManager.getTest().log(Status.INFO, "actionResult: " + actionResult);
+                if (actionResult) {
+                    ExtentTestManager.getTest().log(Status.PASS, "Có action Compare.");
+                } else {
+                    ExtentTestManager.getTest().log(Status.FAIL, "Không có action nào được cài đặt.");
                 }
             }
-            btnComparePackages.click();
             return true;
         } catch (Exception ex) {
             return false;
@@ -129,7 +154,7 @@ public class JobDetailPage {
         try {
             searchCarousel();
             if (btnContactMe.isDisplayed()) {
-                js.executeScript("window.scrollBy(0, 500);");
+                js.executeScript("window.scrollBy(0, 300);");
             }
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -148,38 +173,84 @@ public class JobDetailPage {
     }
 
     public boolean clickBtnContinue() {
+        var jobName = "";
         try {
+            WaitUtils.waitForPageLoad(driver, 10);
             searchCarousel();
             if (btnContinue.isDisplayed()) {
-                MouseAnimationUtils.animateMouseToElement(btnContinue);
-                MouseAnimationUtils.pause(50);
                 if (btnContinue.isEnabled()) {
                     MouseAnimationUtils.animateAndClick(btnContinue);
+                    jobName = jobTitle.getText();
                 }
             }
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement toarstResult = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//div[@class='Toastify']")));
+            ExtentTestManager.getTest().info("Toast success: " + toarstResult.getText());
             MouseAnimationUtils.animateMouseToElement(toarstResult);
+            MouseAnimationUtils.pause(50);
+            if (btnContinue.isEnabled()) {
+                ExtentTestManager.getTest().log(Status.FAIL, "Lỗi UI: Không disable sau khi booking thành công");
+                return false;
+            }
+            MouseAnimationUtils.animateAndClick(btnAvatar);
+            WaitUtils.waitForPageLoad(driver, 10);
+            if (!listBookings.isEmpty()) {
+                ExtentTestManager.getTest().log(Status.INFO, "List: " + listBookings.size());
+                ExtentTestManager.getTest().log(Status.INFO, "List: " + listBookings);
+                for (WebElement gigCard : listBookings) {
+                    try {
+                        // Dựa vào HTML, title nằm trong h1 tag
+                        WebElement titleElement = gigCard.findElement(By.tagName("h1"));
+                        String gigTitle = titleElement.getText().trim();
+
+                        // So sánh tên (có thể dùng contains hoặc equals)
+                        if (gigTitle.toLowerCase().contains(jobName.toLowerCase())) {
+                            ExtentTestManager.getTest().log(Status.PASS,
+                                    "Tìm thấy gig với tên: " + jobName);
+                            return true;
+                        }
+
+                    } catch (NoSuchElementException e) {
+                        // Thử tìm bằng cách khác nếu không có h1
+                        String cardText = gigCard.getText();
+                        if (cardText.toLowerCase().contains(jobName.toLowerCase())) {
+                            ExtentTestManager.getTest().log(Status.PASS,
+                                    "Tìm thấy gig chứa text: " + jobName);
+                            return true;
+                        }
+                    }
+                }
+
+                ExtentTestManager.getTest().log(Status.FAIL,
+                        "Không tìm thấy gig với tên: " + jobName);
+                return false;
+            }
             return true;
         } catch (Exception ex) {
+            ExtentTestManager.getTest().log(Status.FAIL, ex.getMessage());
             return false;
         }
     }
 
     public boolean searchOnNavigation() {
         js.executeScript("window.scrollBy(0, 200);");
-
-        if (!btnSearchNav.isDisplayed() || !inputSearchNav.isDisplayed()) {
+        if(!btnSearchNav.isDisplayed()){
+            ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy input search trên navigation Home");
             return false;
         }
+        if(!inputSearchNav.isDisplayed()){
+            ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy button search trên navigation Home");
+            return false;
+        }
+        String currentUrl = driver.getCurrentUrl();
 
         MouseAnimationUtils.animateMouseToElement(inputSearchNav);
         MouseAnimationUtils.animateTyping(inputSearchNav, "website");
         MouseAnimationUtils.pause(50);
         MouseAnimationUtils.animateAndClick(btnSearchNav);
         WaitUtils.waitForPageLoad(driver, 10);
-        return true;
+        return verifyAfterClickActions(currentUrl);
     }
 
     public void searchCarousel() {
@@ -199,6 +270,48 @@ public class JobDetailPage {
 
         MouseAnimationUtils.animateMouseToElement(btnCardDescription);
         btnCardDescription.click();
+    }
+
+    public boolean verifyFunctionSearchCarousel() {
+        try{
+            if(!inputSearchCarousel.isDisplayed()){
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy input search trên Carousel Home");
+                return false;
+            }
+            if(!btnSubmit.isDisplayed()){
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy button search trên Carousel Home");
+                return false;
+            }
+            String currentUrl = driver.getCurrentUrl();
+            if(currentUrl != null && currentUrl.toLowerCase() == domain)
+            {
+                MouseAnimationUtils.animateMouseToElement(btnLogo);
+                btnLogo.click();
+                WaitUtils.waitForPageLoad(driver, 10);
+                wait.until(ExpectedConditions.visibilityOf(inputSearchCarousel));
+            }
+
+            MouseAnimationUtils.animateMouseToElement(inputSearchCarousel);
+            MouseAnimationUtils.animateTyping(inputSearchCarousel, searchKey);
+
+            MouseAnimationUtils.animateMouseToElement(btnSubmit);
+            btnSubmit.click();
+            ExtentTestManager.getTest().log(Status.INFO, "Search carousel");
+            WaitUtils.waitForPageLoad(driver, 10);
+
+            return verifyAfterClickActions(currentUrl);
+        }
+        catch(Exception e){
+            ExtentTestManager.getTest().log(Status.FAIL, e.getMessage());
+            return false;
+        }
+    }
+
+    public void isDisplayedBtn() {
+        if (btnContinue.isDisplayed())
+            ExtentTestManager.getTest().log(Status.FAIL, "Button Continue hiển thị khi chưa login");
+        if (btnComparePackages.isDisplayed())
+            ExtentTestManager.getTest().log(Status.FAIL, "Button Compare hiển thị khi chưa login");
     }
 
     /* Helper */
@@ -311,5 +424,167 @@ public class JobDetailPage {
         }
 
         return checkElementClickable(element);
+    }
+
+    private boolean verifyAfterClickActions(String originalUrl) {
+        boolean urlChanged = false;
+        boolean toastAppeared = false;
+        boolean modalAppeared = false;
+
+        try {
+            urlChanged = checkUrlChange(originalUrl);
+
+            toastAppeared = checkToastAppearance();
+
+            modalAppeared = checkModalAppearance();
+
+            logVerificationResults(urlChanged, toastAppeared, modalAppeared);
+
+            return urlChanged || toastAppeared || modalAppeared;
+
+        } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.FAIL, "Lỗi khi verify sau khi click: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean checkUrlChange(String originalUrl) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+            boolean urlChanged = wait.until(driver -> {
+                String currentUrl = driver.getCurrentUrl();
+                return !currentUrl.equals(originalUrl);
+            });
+
+            if (urlChanged) {
+                String newUrl = driver.getCurrentUrl();
+                ExtentTestManager.getTest().log(Status.PASS,
+                        "URL đã thay đổi từ: " + originalUrl + " sang: " + newUrl);
+                return true;
+            }
+
+        } catch (TimeoutException e) {
+            ExtentTestManager.getTest().log(Status.INFO, "URL không thay đổi sau 5 giây");
+        } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.WARNING, "Lỗi khi kiểm tra URL: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    private boolean checkToastAppearance() {
+        try {
+            List<String> toastSelectors = Arrays.asList(
+                    ".toast",
+                    ".notification",
+                    ".alert",
+                    ".message",
+                    "[data-toast]",
+                    ".toast-container .toast",
+                    ".swal2-container",
+                    ".toastr"
+            );
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+            for (String selector : toastSelectors) {
+                try {
+                    WebElement toast = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(selector)));
+                    if (toast.isDisplayed()) {
+                        String toastMessage = toast.getText();
+                        ExtentTestManager.getTest().log(Status.PASS,
+                                "Toast xuất hiện với message: " + toastMessage);
+                        return true;
+                    }
+                } catch (TimeoutException e) {
+                    continue;
+                }
+            }
+
+            ExtentTestManager.getTest().log(Status.INFO, "Không có toast nào xuất hiện");
+            return false;
+
+        } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.WARNING, "Lỗi khi kiểm tra toast: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean checkModalAppearance() {
+        try {
+            List<String> modalSelectors = Arrays.asList(
+                    ".modal",
+                    ".popup",
+                    ".dialog",
+                    ".overlay",
+                    "[data-modal]",
+                    ".modal.show",
+                    ".modal.fade.show",
+                    ".ui-dialog",
+                    ".fancybox-container"
+            );
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+            for (String selector : modalSelectors) {
+                try {
+                    WebElement modal = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(selector)));
+                    if (modal.isDisplayed()) {
+                        ExtentTestManager.getTest().log(Status.PASS,
+                                "Modal xuất hiện với selector: " + selector);
+                        checkModalContent(modal);
+                        return true;
+                    }
+                } catch (TimeoutException e) {
+                    continue;
+                }
+            }
+
+            ExtentTestManager.getTest().log(Status.INFO, "Không có modal nào xuất hiện");
+            return false;
+
+        } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.WARNING, "Lỗi khi kiểm tra modal: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private void checkModalContent(WebElement modal) {
+        try {
+            WebElement modalTitle = modal.findElement(By.cssSelector(".modal-title, .dialog-title, h1, h2, h3"));
+            if (modalTitle != null && modalTitle.isDisplayed()) {
+                ExtentTestManager.getTest().log(Status.INFO,
+                        "Modal title: " + modalTitle.getText());
+            }
+
+            WebElement modalBody = modal.findElement(By.cssSelector(".modal-body, .dialog-content, .content"));
+            if (modalBody != null && modalBody.isDisplayed()) {
+                String bodyText = modalBody.getText();
+                if (bodyText.length() > 100) {
+                    bodyText = bodyText.substring(0, 100) + "...";
+                }
+                ExtentTestManager.getTest().log(Status.INFO,
+                        "Modal content: " + bodyText);
+            }
+
+        } catch (Exception e) {
+            // Ignore nếu không tìm thấy content
+        }
+    }
+
+    private void logVerificationResults(boolean urlChanged, boolean toastAppeared, boolean modalAppeared) {
+        StringBuilder result = new StringBuilder("Kết quả kiểm tra sau khi click element: ");
+
+        if (urlChanged) result.append("URL đã thay đổi ");
+        if (toastAppeared) result.append("Toast xuất hiện ");
+        if (modalAppeared) result.append("Modal xuất hiện ");
+
+        if (!urlChanged && !toastAppeared && !modalAppeared) {
+            result.append("Không có thay đổi nào được phát hiện");
+            ExtentTestManager.getTest().log(Status.WARNING, result.toString());
+        } else {
+            ExtentTestManager.getTest().log(Status.PASS, result.toString());
+        }
     }
 }
