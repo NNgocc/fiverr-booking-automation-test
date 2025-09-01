@@ -245,8 +245,10 @@ public class JobDetailPage {
         }
         String currentUrl = driver.getCurrentUrl();
 
+        String key = getRandomKeyword();
+        ExtentTestManager.getTest().log(Status.INFO, "search keyword: " + key);
         MouseAnimationUtils.animateMouseToElement(inputSearchNav);
-        MouseAnimationUtils.animateTyping(inputSearchNav, "website");
+        MouseAnimationUtils.animateTyping(inputSearchNav, key);
         MouseAnimationUtils.pause(50);
         MouseAnimationUtils.animateAndClick(btnSearchNav);
         WaitUtils.waitForPageLoad(driver, 10);
@@ -259,8 +261,10 @@ public class JobDetailPage {
         WaitUtils.waitForPageLoad(driver, 10);
         wait.until(ExpectedConditions.visibilityOf(inputSearchCarousel));
 
+        String key = getRandomKeyword();
+        ExtentTestManager.getTest().log(Status.INFO, "search keyword: " + key);
         MouseAnimationUtils.animateMouseToElement(inputSearchCarousel);
-        MouseAnimationUtils.animateTyping(inputSearchCarousel, "logo");
+        MouseAnimationUtils.animateTyping(inputSearchCarousel, key);
         WaitUtils.waitForPageLoad(driver, 10);
 
         MouseAnimationUtils.animateMouseToElement(btnSubmit);
@@ -291,8 +295,10 @@ public class JobDetailPage {
                 wait.until(ExpectedConditions.visibilityOf(inputSearchCarousel));
             }
 
+            String key = getRandomKeyword();
+            ExtentTestManager.getTest().log(Status.INFO, "search keyword: " + key);
             MouseAnimationUtils.animateMouseToElement(inputSearchCarousel);
-            MouseAnimationUtils.animateTyping(inputSearchCarousel, searchKey);
+            MouseAnimationUtils.animateTyping(inputSearchCarousel, key);
 
             MouseAnimationUtils.animateMouseToElement(btnSubmit);
             btnSubmit.click();
@@ -587,4 +593,46 @@ public class JobDetailPage {
             ExtentTestManager.getTest().log(Status.PASS, result.toString());
         }
     }
+
+    //random keyword
+    private static Random random = new Random();
+    public static String getRandomKeyword() {
+        int randomIndex = random.nextInt(SEARCH_KEYWORDS.length);
+        return SEARCH_KEYWORDS[randomIndex];
+    }
+    private static final String[] SEARCH_KEYWORDS = {
+            // Web Development
+            "website", "web design", "frontend", "backend", "fullstack",
+            "react", "angular", "vue", "nodejs", "javascript",
+            "html", "css", "bootstrap", "responsive design",
+
+            // Mobile Development
+            "mobile app", "android", "ios", "flutter", "react native",
+            "app development", "mobile ui", "app design",
+
+            // Design & Graphics
+            "logo design", "graphic design", "ui design", "ux design",
+            "photoshop", "illustrator", "figma", "sketch",
+            "banner", "brochure", "business card", "flyer",
+
+            // Digital Marketing
+            "seo", "social media", "facebook ads", "google ads",
+            "content marketing", "email marketing", "digital marketing",
+            "instagram marketing", "youtube marketing",
+
+            // Business Services
+            "data entry", "virtual assistant", "customer service",
+            "translation", "copywriting", "proofreading",
+            "market research", "business plan", "consulting",
+
+            // Technology
+            "automation", "api integration", "database design",
+            "cloud services", "aws", "azure", "devops",
+            "machine learning", "ai", "chatbot",
+
+            // Creative Services
+            "video editing", "animation", "voice over",
+            "music production", "podcast editing", "presentation design",
+            "infographic", "illustration", "3d modeling"
+    };
 }
