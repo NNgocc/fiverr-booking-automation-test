@@ -1,29 +1,30 @@
 package com.automation.tests;
 
+import com.automation.base.BaseTest;
+import com.automation.helpers.LoginHelper;
 import com.automation.pages.JobDetailPage;
-import com.automation.untils.DriverManager;
-import com.automation.untils.ExtentTestManager;
-import com.automation.untils.LoggerUtil;
-import com.automation.untils.MouseAnimationUtils;
+import com.automation.utils.DriverManager;
+import com.automation.utils.ExtentTestManager;
+import com.automation.utils.LoggerUtil;
+import com.automation.utils.WaitUtils;
 import com.aventstack.extentreports.Status;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class JobDetailTest extends LoginTest {
+public class JobDetailTest extends BaseTest {
     @Test(testName = "TC412 - Verify function user become a seller", description = "Verify chức năng Become a seller")
     public void verifyFunctionBecomeSeller() {
         try {
             ExtentTestManager.getTest().info("TC412 - Verify function user become a seller");
 
-            LoginTest login = new LoginTest();
-            login.testAnimatedValidLogin();
+            LoginHelper.loginWithAnimation();
             if (DriverManager.getDriver() == null) {
                 System.err.println("WebDriver is null! BaseTest setup failed.");
                 throw new RuntimeException("WebDriver not initialized");
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnBecomeSeller();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
@@ -41,15 +42,14 @@ public class JobDetailTest extends LoginTest {
         try {
             ExtentTestManager.getTest().info("TC409 - Verify function user become a business");
 
-            LoginTest login = new LoginTest();
-            login.testAnimatedValidLogin();
+            LoginHelper.loginWithAnimation();
             if (DriverManager.getDriver() == null) {
                 System.err.println("WebDriver is null! BaseTest setup failed.");
                 throw new RuntimeException("WebDriver not initialized");
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnBecomeBusiness();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
@@ -69,7 +69,7 @@ public class JobDetailTest extends LoginTest {
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.searchOnNavigation();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
             if (rs)
                 Assert.assertTrue(rs, "Search success");
             else
@@ -88,7 +88,7 @@ public class JobDetailTest extends LoginTest {
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             boolean rs = job.verifyFunctionSearchCarousel();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
             if (rs)
                 Assert.assertTrue(rs, "Search success");
             else
@@ -101,15 +101,14 @@ public class JobDetailTest extends LoginTest {
     @Test(testName = "TC415 - Verify function contact seller/business", description = "Verify chức năng Contact Me")
     public void verifyButtonContact() {
         try {
-            LoginTest login = new LoginTest();
-            login.testAnimatedValidLogin();
+            LoginHelper.loginWithAnimation();
             if (DriverManager.getDriver() == null) {
                 System.err.println("WebDriver is null! BaseTest setup failed.");
                 throw new RuntimeException("WebDriver not initialized");
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnContactMe();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
             if (!rs)
                 ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy button Contact Me");
 
@@ -132,12 +131,11 @@ public class JobDetailTest extends LoginTest {
                 throw new RuntimeException("WebDriver not initialized");
             }
 
-            LoginTest login = new LoginTest();
-            login.testAnimatedValidLogin();
+            LoginHelper.loginWithAnimation();
 
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnContinue();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
@@ -152,15 +150,14 @@ public class JobDetailTest extends LoginTest {
     @Test(testName = "TC421 - Verify method Compare Package", description = "Verify chức năng Compare packages")
     public void verifyButtonCompare() {
         try {
-            LoginTest login = new LoginTest();
-            login.testAnimatedValidLogin();
+            LoginHelper.loginWithAnimation();
             if (DriverManager.getDriver() == null) {
                 System.err.println("WebDriver is null! BaseTest setup failed.");
                 throw new RuntimeException("WebDriver not initialized");
             }
             JobDetailPage job = new JobDetailPage(DriverManager.getDriver());
             var rs = job.clickBtnCompare();
-            Thread.sleep(3000);
+            WaitUtils.waitShort();
 
             if (rs)
                 Assert.assertTrue(rs, "Click button success");
@@ -171,23 +168,4 @@ public class JobDetailTest extends LoginTest {
         } finally {
         }
     }
-
-
-    //trên trang nhưng nằm ở user story khác
-//    @Test(testName = "TC413 - Verify function contact seller/business", description = "Verify chức năng Comment")
-//    public void verifyButtonComment(){
-//
-//    }
-//    @Test(description = "Verify tính năng like Comment")
-//    public void verifyIconLikeComment(){
-//
-//    }
-//    @Test(description = "Verify tính năng un-like Comment")
-//    public void verifyIconUnLikeComment(){
-//
-//    }
-//    @Test(description = "Verify tính năng Helpful (Comment)")
-//    public void verifyHelpfulComment(){
-//
-//    }
 }

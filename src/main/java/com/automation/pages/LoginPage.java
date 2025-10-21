@@ -1,7 +1,7 @@
 package com.automation.pages;
 
-import com.automation.untils.MouseAnimationUtils;
-import com.automation.untils.WaitUtils;
+import com.automation.utils.MouseAnimationUtils;
+import com.automation.utils.WaitUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

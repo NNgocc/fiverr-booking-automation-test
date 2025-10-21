@@ -1,8 +1,8 @@
 package com.automation.pages;
 
-import com.automation.untils.ExtentTestManager;
-import com.automation.untils.MouseAnimationUtils;
-import com.automation.untils.WaitUtils;
+import com.automation.utils.ExtentTestManager;
+import com.automation.utils.MouseAnimationUtils;
+import com.automation.utils.WaitUtils;
 import com.aventstack.extentreports.Status;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -96,6 +96,7 @@ public class JobDetailPage {
                 return false;
             }
         } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.FAIL, "clickBtnBecomeBusiness failed: " + e.getMessage());
             return false;
         }
     }
@@ -122,6 +123,7 @@ public class JobDetailPage {
                 return false;
             }
         } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.FAIL, "clickBtnBecomeSeller failed: " + e.getMessage());
             return false;
         }
     }
@@ -146,6 +148,7 @@ public class JobDetailPage {
             }
             return true;
         } catch (Exception ex) {
+            ExtentTestManager.getTest().log(Status.FAIL, "clickBtnCompare failed: " + ex.getMessage());
             return false;
         }
     }
@@ -160,7 +163,7 @@ public class JobDetailPage {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//button[normalize-space()='Contact Me']")));
-            if (btnContactMe.isDisplayed()) {
+            if (!btnContactMe.isDisplayed()) {
                 return false;
             }
             MouseAnimationUtils.animateMouseToElement(btnContactMe);
@@ -168,6 +171,7 @@ public class JobDetailPage {
             MouseAnimationUtils.animateAndClick(btnContactMe);
             return true;
         } catch (Exception ex) {
+            ExtentTestManager.getTest().log(Status.FAIL, "clickBtnContactMe failed: " + ex.getMessage());
             return false;
         }
     }
@@ -283,7 +287,7 @@ public class JobDetailPage {
                 return false;
             }
             String currentUrl = driver.getCurrentUrl();
-            if(currentUrl != null && currentUrl.toLowerCase() == domain)
+            if(currentUrl != null && currentUrl.toLowerCase().equals(domain.toLowerCase()))
             {
                 MouseAnimationUtils.animateMouseToElement(btnLogo);
                 btnLogo.click();
@@ -302,7 +306,7 @@ public class JobDetailPage {
             return verifyAfterClickActions(currentUrl);
         }
         catch(Exception e){
-            ExtentTestManager.getTest().log(Status.FAIL, e.getMessage());
+            ExtentTestManager.getTest().log(Status.FAIL, "verifyFunctionSearchCarousel failed: " + e.getMessage());
             return false;
         }
     }

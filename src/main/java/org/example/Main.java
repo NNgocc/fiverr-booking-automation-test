@@ -1,6 +1,6 @@
 package org.example;
 
-import com.automation.untils.LoggerUtil;
+import com.automation.utils.LoggerUtil;
 import org.testng.TestNG;
 
 import java.util.Arrays;
