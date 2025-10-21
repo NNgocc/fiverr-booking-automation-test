@@ -1,7 +1,7 @@
 package com.automation.listeners;
 
-import com.automation.untils.ExtentManager;
-import com.automation.untils.ExtentTestManager;
+import com.automation.utils.ExtentManager;
+import com.automation.utils.ExtentTestManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
