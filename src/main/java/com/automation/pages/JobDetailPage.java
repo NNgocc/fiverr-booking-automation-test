@@ -99,6 +99,9 @@ public class JobDetailPage {
             searchCarousel();
             String currentUrl = driver.getCurrentUrl();
 
+            // Scroll to element and wait for it to be clickable
+            WaitUtils.scrollToElementAndWait(driver, liBecomeBusiness, 10);
+
             if (liBecomeBusiness.isDisplayed()) {
                 MouseAnimationUtils.animateMouseToElement(liBecomeBusiness);
                 MouseAnimationUtils.pause(50);
@@ -132,6 +135,9 @@ public class JobDetailPage {
             searchCarousel();
             String currentUrl = driver.getCurrentUrl();
 
+            // Scroll to element and wait for it to be clickable
+            WaitUtils.scrollToElementAndWait(driver, liBecomeSeller, 10);
+
             if (liBecomeSeller.isDisplayed()) {
                 MouseAnimationUtils.animateMouseToElement(liBecomeSeller);
                 MouseAnimationUtils.pause(50);
@@ -157,6 +163,9 @@ public class JobDetailPage {
             WaitUtils.waitForPageLoad(driver, 10);
             searchCarousel();
 
+            // Scroll to Compare Packages button and wait
+            WaitUtils.scrollToElementAndWait(driver, btnComparePackages, 10);
+
             String currentUrl = driver.getCurrentUrl();
             if (btnComparePackages.isDisplayed()) {
                 MouseAnimationUtils.animateMouseToElement(btnComparePackages);
@@ -171,6 +180,9 @@ public class JobDetailPage {
                 } else {
                     ExtentTestManager.getTest().log(Status.FAIL, "Không có action nào được cài đặt.");
                 }
+            } else {
+                ExtentTestManager.getTest().log(Status.FAIL, "Button Compare Packages not visible after scroll");
+                return false;
             }
             return true;
         } catch (Exception ex) {
@@ -186,21 +198,22 @@ public class JobDetailPage {
     public boolean clickBtnContactMe() {
         try {
             searchCarousel();
-            if (btnContactMe.isDisplayed()) {
-                js.executeScript("window.scrollBy(0, " + TestConstants.SCROLL_OFFSET + ");");
-            }
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//button[normalize-space()='Contact Me']")));
+            // Scroll to Contact Me button and wait for it to be visible and clickable
+            WaitUtils.scrollToElementAndWait(driver, btnContactMe, 10);
 
+            // Double check element is displayed
             if (!btnContactMe.isDisplayed()) {
+                ExtentTestManager.getTest().log(Status.FAIL, "Button Contact Me not visible after scroll");
                 return false;
             }
 
+            // Click with animation
             MouseAnimationUtils.animateMouseToElement(btnContactMe);
             MouseAnimationUtils.pause(50);
             MouseAnimationUtils.animateAndClick(btnContactMe);
+
+            ExtentTestManager.getTest().log(Status.PASS, "Successfully clicked Contact Me button");
             return true;
         } catch (Exception ex) {
             ExtentTestManager.getTest().log(Status.FAIL, "clickBtnContactMe failed: " + ex.getMessage());
@@ -218,11 +231,21 @@ public class JobDetailPage {
             WaitUtils.waitForPageLoad(driver, 10);
             searchCarousel();
 
+            // Scroll to Continue button and wait for it to be clickable
+            WaitUtils.scrollToElementAndWait(driver, btnContinue, 10);
+
             if (btnContinue.isDisplayed()) {
                 if (btnContinue.isEnabled()) {
-                    MouseAnimationUtils.animateAndClick(btnContinue);
+                    // Get job name before clicking
                     jobName = jobTitle.getText();
+
+                    MouseAnimationUtils.animateMouseToElement(btnContinue);
+                    MouseAnimationUtils.pause(50);
+                    MouseAnimationUtils.animateAndClick(btnContinue);
                 }
+            } else {
+                ExtentTestManager.getTest().log(Status.FAIL, "Button Continue not visible after scroll");
+                return false;
             }
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -237,6 +260,8 @@ public class JobDetailPage {
                 return false;
             }
 
+            // Scroll to avatar before clicking
+            WaitUtils.scrollToElementAndWait(driver, btnAvatar, 10);
             MouseAnimationUtils.animateAndClick(btnAvatar);
             WaitUtils.waitForPageLoad(driver, 10);
 
