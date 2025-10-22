@@ -40,26 +40,36 @@ public class SearchHelper {
      * @return true if search successful
      */
     public boolean searchOnNavigation(WebElement inputSearchNav, WebElement btnSearchNav) {
-        js.executeScript("window.scrollBy(0, " + TestConstants.SCROLL_OFFSET_SMALL + ");");
+        try {
+            // Scroll to search input and wait for it to be visible and clickable
+            WaitUtils.scrollToElementAndWait(driver, inputSearchNav);
 
-        if (!btnSearchNav.isDisplayed()) {
-            ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy input search trên navigation Home");
+            // Verify both elements are now visible
+            if (!btnSearchNav.isDisplayed()) {
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy button search trên navigation Home");
+                return false;
+            }
+            if (!inputSearchNav.isDisplayed()) {
+                ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy input search trên navigation Home");
+                return false;
+            }
+
+            String currentUrl = driver.getCurrentUrl();
+
+            MouseAnimationUtils.animateMouseToElement(inputSearchNav);
+            MouseAnimationUtils.animateTyping(inputSearchNav, "website");
+            MouseAnimationUtils.pause(50);
+
+            // Ensure button is clickable before clicking
+            WaitUtils.waitForElementClickable(driver, btnSearchNav);
+            MouseAnimationUtils.animateAndClick(btnSearchNav);
+            WaitUtils.waitForPageLoad(driver, 10);
+
+            return verificationHelper.verifyAfterClickActions(currentUrl);
+        } catch (Exception e) {
+            ExtentTestManager.getTest().log(Status.FAIL, "searchOnNavigation failed: " + e.getMessage());
             return false;
         }
-        if (!inputSearchNav.isDisplayed()) {
-            ExtentTestManager.getTest().log(Status.FAIL, "Không tìm thấy button search trên navigation Home");
-            return false;
-        }
-
-        String currentUrl = driver.getCurrentUrl();
-
-        MouseAnimationUtils.animateMouseToElement(inputSearchNav);
-        MouseAnimationUtils.animateTyping(inputSearchNav, "website");
-        MouseAnimationUtils.pause(50);
-        MouseAnimationUtils.animateAndClick(btnSearchNav);
-        WaitUtils.waitForPageLoad(driver, 10);
-
-        return verificationHelper.verifyAfterClickActions(currentUrl);
     }
 
     /**
