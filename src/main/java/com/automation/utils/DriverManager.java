@@ -1,4 +1,4 @@
-package com.automation.untils;
+package com.automation.utils;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;

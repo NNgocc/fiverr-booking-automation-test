@@ -1,4 +1,4 @@
-package com.automation.untils;
+package com.automation.utils;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;

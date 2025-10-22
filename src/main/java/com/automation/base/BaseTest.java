@@ -1,6 +1,6 @@
 package com.automation.base;
 
-import com.automation.untils.*;
+import com.automation.utils.*;
 import com.aventstack.extentreports.Status;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;

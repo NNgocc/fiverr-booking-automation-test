@@ -1,4 +1,4 @@
-package com.automation.untils;
+package com.automation.utils;
 
 import com.aventstack.extentreports.ExtentTest;
 
