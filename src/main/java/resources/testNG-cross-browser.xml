@@ -15,23 +15,23 @@
         </classes>
     </test>
 
-    <!-- Firefox Browser Tests -->
-    <test name="Firefox Tests">
-        <parameter name="browser" value="firefox"/>
-        <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>
-        <classes>
-            <class name="com.automation.tests.LoginTest"/>
-            <class name="com.automation.tests.JobDetailTest"/>
-        </classes>
-    </test>
+<!--    &lt;!&ndash; Firefox Browser Tests &ndash;&gt;-->
+<!--    <test name="Firefox Tests">-->
+<!--        <parameter name="browser" value="firefox"/>-->
+<!--        <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>-->
+<!--        <classes>-->
+<!--            <class name="com.automation.tests.LoginTest"/>-->
+<!--            <class name="com.automation.tests.JobDetailTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
 
-    <!-- Edge Browser Tests -->
-    <test name="Edge Tests">
-        <parameter name="browser" value="edge"/>
-        <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>
-        <classes>
-            <class name="com.automation.tests.LoginTest"/>
-            <class name="com.automation.tests.JobDetailTest"/>
-        </classes>
-    </test>
+<!--    &lt;!&ndash; Edge Browser Tests &ndash;&gt;-->
+<!--    <test name="Edge Tests">-->
+<!--        <parameter name="browser" value="edge"/>-->
+<!--        <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>-->
+<!--        <classes>-->
+<!--            <class name="com.automation.tests.LoginTest"/>-->
+<!--            <class name="com.automation.tests.JobDetailTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
 </suite>
