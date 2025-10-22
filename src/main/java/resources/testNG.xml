@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suite name="LoginTestSuite" parallel="true">
+<suite name="LoginTestSuite" parallel="false">
 
 <listeners>
     <listener class-name="com.automation.listeners.ExtentTestListener"/>
+    <listener class-name="com.automation.listeners.RetryListener"/>
 </listeners>
 
 <test name="ChromeLoginTest">
@@ -10,7 +11,7 @@
     <parameter name="url" value="https://demo5.cybersoft.edu.vn/"/>
 
     <classes>
-<!--        <class name="com.automation.tests.LoginTest"/>-->
+        <class name="com.automation.tests.LoginTest"/>
         <class name="com.automation.tests.JobDetailTest"/>
     </classes>
 </test>
