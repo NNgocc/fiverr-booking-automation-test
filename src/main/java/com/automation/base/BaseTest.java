@@ -33,13 +33,8 @@ public class BaseTest {
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-        if (!result.isSuccess()) {
-            try {
-                String screenshot = ScreenshotUtils.captureScreenshot(DriverManager.getDriver(), result.getMethod().getMethodName());
-            } catch (Exception e) {
-                System.err.println("Screenshot failed: " + e.getMessage());
-            }
-        }
+        // Screenshot capture is now handled by ExtentTestListener
+        // to avoid duplicate screenshots and ensure proper attachment to ExtentReport
         DriverManager.quitDriver();
     }
 
