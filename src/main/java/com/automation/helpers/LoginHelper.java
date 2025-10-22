@@ -12,7 +12,7 @@ import com.aventstack.extentreports.Status;
  */
 public class LoginHelper {
 
-    private static final String DEFAULT_EMAIL = "demo6@tech.com";
+    private static final String DEFAULT_EMAIL = "demo5@tech.com";
     private static final String DEFAULT_PASSWORD = "Tech@123";
 
     /**

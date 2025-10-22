@@ -19,7 +19,7 @@ public class LoginTest extends BaseTest {
             }
 
             LoginPage loginPage = new LoginPage(DriverManager.getDriver());
-            loginPage.loginWithAnimation("demo6@tech.com", "Tech@123");
+            loginPage.loginWithAnimation("demo5@tech.com", "Tech@123");
             WaitUtils.waitShort();
             ExtentTestManager.getTest().log(Status.INFO, "Login successful");
         } catch (Exception e) {
