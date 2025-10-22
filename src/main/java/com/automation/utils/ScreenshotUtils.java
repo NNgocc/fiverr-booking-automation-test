@@ -30,4 +30,31 @@ public class ScreenshotUtils {
     public static String getScreenshotAsBase64(WebDriver driver) {
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
     }
+
+    /**
+     * Converts an absolute screenshot path to a relative path for ExtentReport HTML.
+     * ExtentReport is located at: target/ExtentReport/Test-Automation-Report.html
+     * Screenshots are located at: target/screenshots/testName_timestamp.png
+     * Relative path from report to screenshot: ../screenshots/testName_timestamp.png
+     *
+     * @param absolutePath The absolute path to the screenshot file
+     * @return Relative path suitable for ExtentReport HTML, or null if input is null
+     */
+    public static String getRelativeScreenshotPath(String absolutePath) {
+        if (absolutePath == null) {
+            return null;
+        }
+
+        try {
+            // Extract just the filename from absolute path
+            File file = new File(absolutePath);
+            String filename = file.getName();
+
+            // Return relative path from ExtentReport directory to screenshots directory
+            return "../screenshots/" + filename;
+        } catch (Exception e) {
+            System.err.println("Failed to convert to relative path: " + e.getMessage());
+            return absolutePath; // Fallback to absolute path
+        }
+    }
 }

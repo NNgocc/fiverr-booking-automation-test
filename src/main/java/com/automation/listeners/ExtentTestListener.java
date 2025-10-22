@@ -1,7 +1,9 @@
 package com.automation.listeners;
 
+import com.automation.utils.DriverManager;
 import com.automation.utils.ExtentManager;
 import com.automation.utils.ExtentTestManager;
+import com.automation.utils.ScreenshotUtils;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
@@ -40,6 +42,28 @@ public class ExtentTestListener implements ITestListener {
                 MarkupHelper.createLabel("Test FAILED: " + result.getMethod().getMethodName(),
                         ExtentColor.RED));
         ExtentTestManager.getTest().log(Status.FAIL, result.getThrowable());
+
+        // Capture and attach screenshot to ExtentReport
+        try {
+            if (DriverManager.getDriver() != null) {
+                String screenshotPath = ScreenshotUtils.captureScreenshot(
+                        DriverManager.getDriver(),
+                        result.getMethod().getMethodName());
+
+                if (screenshotPath != null) {
+                    String relativePath = ScreenshotUtils.getRelativeScreenshotPath(screenshotPath);
+                    // addScreenCaptureFromPath() makes the screenshot clickable/expandable in the report
+                    ExtentTestManager.getTest().addScreenCaptureFromPath(relativePath,
+                            "Screenshot on failure");
+                    System.out.println("Screenshot attached to ExtentReport: " + relativePath);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to attach screenshot to ExtentReport: " + e.getMessage());
+            ExtentTestManager.getTest().log(Status.WARNING,
+                    "Could not capture screenshot: " + e.getMessage());
+        }
+
         ExtentTestManager.endTest();
     }
 
