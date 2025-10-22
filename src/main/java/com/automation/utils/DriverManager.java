@@ -39,11 +39,33 @@ public class DriverManager {
                 break;
 
             case "edge":
-                WebDriverManager.edgedriver().setup();
-                org.openqa.selenium.edge.EdgeOptions edgeOptions = new org.openqa.selenium.edge.EdgeOptions();
-                edgeOptions.addArguments("--start-maximized");
-                edgeOptions.addArguments("--disable-extensions");
-                driver.set(new EdgeDriver(edgeOptions));
+                try {
+                    System.out.println("Setting up Microsoft Edge driver...");
+                    WebDriverManager.edgedriver().setup();
+
+                    EdgeOptions edgeOptions = new EdgeOptions();
+                    edgeOptions.addArguments("--start-maximized");
+                    edgeOptions.addArguments("--disable-blink-features=AutomationControlled");
+                    edgeOptions.addArguments("--disable-extensions");
+                    edgeOptions.addArguments("--no-sandbox");
+                    edgeOptions.addArguments("--disable-dev-shm-usage");
+                    edgeOptions.addArguments("--disable-gpu");
+                    edgeOptions.addArguments("--remote-allow-origins=*");
+
+                    // Set preferences to disable notifications and popups
+                    edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+                    edgeOptions.setExperimentalOption("useAutomationExtension", false);
+
+                    System.out.println("Creating Edge driver instance...");
+                    driver.set(new EdgeDriver(edgeOptions));
+                    System.out.println("Edge driver initialized successfully!");
+                } catch (Exception e) {
+                    System.err.println("Failed to initialize Edge driver: " + e.getMessage());
+                    System.err.println("Please ensure Microsoft Edge browser is installed.");
+                    System.err.println("You can download it from: https://www.microsoft.com/edge");
+                    throw new RuntimeException("Edge driver initialization failed. " +
+                        "Make sure Microsoft Edge browser is installed on your system.", e);
+                }
                 break;
 
             default:
